@@ -1,0 +1,29 @@
+#Python UART communication to USB
+
+import serial
+import time
+
+# Configure the serial connection
+port = "Port-RPi-Pico-Connected-To"
+baudrate = 115200
+
+try:
+    serial_connection = serial.Serial(port, baudrate)
+except Exception as e:
+    print(f"Failed to connect to {port}: {e}")
+    exit()
+
+# Open a file on your computer to write the received data
+destination_file = open("Path/to/Your/file.txt", "w")
+
+try:
+    while True:
+        if serial_connection.in_waiting:
+            line = serial_connection.readline().decode('utf-8').strip()
+            print(line)
+            destination_file.write(line + "\n")
+except KeyboardInterrupt:
+    print("Interrupted by user, closing...")
+finally:
+    destination_file.close()
+    serial_connection.close()
